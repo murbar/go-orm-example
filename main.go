@@ -12,6 +12,14 @@ import (
 var db *gorm.DB
 var err error
 
+func connectDb() {
+	db, err = gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("Failed to connect")
+	}
+}
+
 func helloWorld(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World")
 }
@@ -27,13 +35,9 @@ func handleRequests() {
 }
 
 func main() {
-	fmt.Println("Go ORM Example")
+	fmt.Println("Go ORM example listening on :8081")
 
-	db, err = gorm.Open("sqlite3", "test.db")
-	if err != nil {
-		fmt.Println(err.Error())
-		panic("Failed to connect")
-	}
+	connectDb()
 	defer db.Close()
 
 	db.AutoMigrate(&User{})
