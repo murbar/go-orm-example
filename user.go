@@ -50,15 +50,18 @@ func AddUser(c *gin.Context) {
 
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["name"]
-
+// DeleteUser removes a user record by ID
+func DeleteUser(c *gin.Context) {
 	var user User
-	db.Where("name = ?", name).Find(&user)
-	db.Delete(&user)
+	id := c.Param("id")
 
-	fmt.Fprintf(w, "User deleted")
+	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	} else {
+	db.Delete(&user)
+		c.Status(http.StatusNoContent)
+	}
+
 }
 
 func UpdateUser(c *gin.Context) {
