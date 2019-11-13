@@ -61,15 +61,18 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "User deleted")
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["name"]
-	email := vars["email"]
-
+func UpdateUser(c *gin.Context) {
 	var user User
-	db.Where("name = ?", name).Find(&user)
-	user.Email = email
-	db.Save(&user)
+	id := c.Param("id")
 
-	fmt.Fprintf(w, "Updated user")
+	db.Where("id = ?", id).Find(&user)
+
+	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	}
+
+	c.BindJSON(&user)
+	db.Save(&user)
+	c.JSON(http.StatusOK, user)
+
 }
