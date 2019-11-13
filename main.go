@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
 var db *gorm.DB
 var err error
+
+const port = ":8080"
 
 func connectDb() {
 	db, err = gorm.Open("sqlite3", "test.db")
@@ -20,23 +21,22 @@ func connectDb() {
 	}
 }
 
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World")
+func root(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Hello Go"})
 }
 
 func handleRequests() {
-	router := mux.NewRouter()
-	router.HandleFunc("/", helloWorld).Methods("GET")
-	router.HandleFunc("/users", AllUsers).Methods("GET")
-	router.HandleFunc("/user/{name}/{email}", NewUser).Methods("POST")
-	router.HandleFunc("/user/{name}", DeleteUser).Methods("DELETE")
-	router.HandleFunc("/user/{name}/{email}", UpdateUser).Methods("PUT")
-	log.Fatal(http.ListenAndServe(":8081", router))
+	router := gin.Default()
+	router.GET("/", root)
+	router.GET("/users", GetUsers)
+	router.POST("/users", AddUser)
+	router.GET("/user/:id", GetUser)
+	router.DELETE("/user/:id", DeleteUser)
+	router.PUT("/user/:id", UpdateUser)
+	router.Run(port)
 }
 
 func main() {
-	fmt.Println("Go ORM example listening on :8081")
-
 	connectDb()
 	defer db.Close()
 
