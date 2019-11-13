@@ -27,10 +27,16 @@ func GetUsers(c *gin.Context) {
 }
 }
 
-func NewUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["name"]
-	email := vars["email"]
+// GetUser gets a user by ID
+func GetUser(c *gin.Context) {
+	id := c.Param("id")
+	var user User
+	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	} else {
+		c.JSON(http.StatusOK, user)
+	}
+}
 
 	db.Create(&User{Name: name, Email: email})
 
