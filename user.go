@@ -16,10 +16,15 @@ type User struct {
 	Email string `json:"email"`
 }
 
-func AllUsers(w http.ResponseWriter, r *http.Request) {
+// GetUsers fetches all users
+func GetUsers(c *gin.Context) {
 	var users []User
-	db.Find(&users)
-	json.NewEncoder(w).Encode(users)
+	if err := db.Find(&users).Error; err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		fmt.Println(err)
+	} else {
+		c.JSON(http.StatusOK, users)
+}
 }
 
 func NewUser(w http.ResponseWriter, r *http.Request) {
