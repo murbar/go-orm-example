@@ -16,7 +16,7 @@ type User struct {
 	Email string `json:"email"`
 }
 
-// GetUsers fetches all users
+// GetUsers fetches all user records
 func GetUsers(c *gin.Context) {
 	var users []User
 	if err := db.Find(&users).Error; err != nil {
@@ -24,10 +24,10 @@ func GetUsers(c *gin.Context) {
 		fmt.Println(err)
 	} else {
 		c.JSON(http.StatusOK, users)
-}
+	}
 }
 
-// GetUser gets a user by ID
+// GetUser gets a user record by ID
 func GetUser(c *gin.Context) {
 	id := c.Param("id")
 	var user User
@@ -38,7 +38,7 @@ func GetUser(c *gin.Context) {
 	}
 }
 
-// AddUser creates a new user
+// AddUser creates a new user record
 func AddUser(c *gin.Context) {
 	var user User
 	if c.BindJSON(&user) == nil {
@@ -58,17 +58,16 @@ func DeleteUser(c *gin.Context) {
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "User not found"})
 	} else {
-	db.Delete(&user)
+		db.Delete(&user)
 		c.Status(http.StatusNoContent)
 	}
 
 }
 
+// UpdateUser updates a user record
 func UpdateUser(c *gin.Context) {
 	var user User
 	id := c.Param("id")
-
-	db.Where("id = ?", id).Find(&user)
 
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "User not found"})
@@ -77,5 +76,4 @@ func UpdateUser(c *gin.Context) {
 	c.BindJSON(&user)
 	db.Save(&user)
 	c.JSON(http.StatusOK, user)
-
 }
