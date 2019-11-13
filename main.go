@@ -30,9 +30,9 @@ func handleRequests() {
 	router.GET("/", root)
 	router.GET("/users", GetUsers)
 	router.POST("/users", AddUser)
-	router.GET("/user/:id", GetUser)
-	router.DELETE("/user/:id", DeleteUser)
-	router.PUT("/user/:id", UpdateUser)
+	router.GET("/users/:id", GetUser)
+	router.DELETE("/users/:id", DeleteUser)
+	router.PUT("/users/:id", UpdateUser)
 	router.Run(port)
 }
 
