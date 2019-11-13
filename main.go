@@ -29,10 +29,10 @@ func handleRequests() {
 	router := gin.Default()
 	router.GET("/", root)
 	router.GET("/users", GetUsers)
-	router.POST("/users", AddUser)
 	router.GET("/users/:id", GetUser)
-	router.DELETE("/users/:id", DeleteUser)
+	router.POST("/users", AddUser)
 	router.PUT("/users/:id", UpdateUser)
+	router.DELETE("/users/:id", DeleteUser)
 	router.Run(port)
 }
 
