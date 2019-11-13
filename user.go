@@ -38,9 +38,16 @@ func GetUser(c *gin.Context) {
 	}
 }
 
-	db.Create(&User{Name: name, Email: email})
+// AddUser creates a new user
+func AddUser(c *gin.Context) {
+	var user User
+	if c.BindJSON(&user) == nil {
+		db.Create(&user)
+		c.JSON(http.StatusCreated, user)
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Unable to create new user"})
+	}
 
-	fmt.Fprintf(w, "New user created") // TODO return JSON response
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
